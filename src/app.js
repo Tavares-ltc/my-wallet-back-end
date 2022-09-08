@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import joi from 'joi';
 import { stripHtml } from 'string-strip-html';
 import bcrypt from 'bcrypt';
+import { v4 as uuid } from 'uuid';
 
 dotenv.config();
 const app = express();
@@ -65,9 +66,16 @@ app.get('/sign-in', async (req, res)=> {
     }
     try {
         const userData = await db.collection('users').findOne({email: req.body.email});
-        bcrypt.compareSync(req.body.password, userData.password);
-        //criar codigo hash e devolver
+       if(userData && bcrypt.compareSync(req.body.password, userData.password)) {
+           const token = uuid();
+           await db.collection('sessions').insertOne({
+            user_id: userData._id,
+            token
+           })   
+           res.status(200).send(token)
+        }
     } catch (error) {
+        console.log(error)
         res.sendStatus(401);
     }
 })
