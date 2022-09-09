@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { MongoClient} from 'mongodb';
+import { MongoClient } from 'mongodb';
 dotenv.config();
 
 const mongoClient = new MongoClient(process.env.MONGO_URI)
@@ -10,7 +10,7 @@ try {
 } catch (error) {
     console.log(err.message);
 }
- const db = mongoClient.db('mywallet');
+const db = mongoClient.db('mywallet');
 
- export default db
+export default db
 

@@ -1,9 +1,9 @@
-import dayjs from 'dayjs';
 import { validateSignupData, validateLogin} from '../schemas/user.schemas.js';
 import { stripHtml } from 'string-strip-html';
 import bcrypt from 'bcrypt';
-import { v4 as uuid } from 'uuid';
+
 import db from '../database/db.js'
+import {createSession} from './session.controller.js'
 
 async function createUser (req, res) {
     const validation = validateSignupData(req.body);
@@ -43,11 +43,8 @@ async function login (req, res) {
     try {
         const userData = await db.collection('users').findOne({email: req.body.email});
        if(userData && bcrypt.compareSync(req.body.password, userData.password)) {
-           const token = uuid();
-           await db.collection('sessions').insertOne({
-            user_id: userData._id,
-            token
-           })   
+           const token = await createSession(userData._id)
+           console.log(token)
            res.status(200).send(token)
         }
     } catch (error) {
