@@ -1,6 +1,7 @@
 import db from '../database/db.js'
 import { v4 as uuid } from 'uuid';
 
+
 async function createSession(user_id) {
     const token = uuid();
     await db.collection('sessions').insertOne({
@@ -29,18 +30,28 @@ async function validateSession(req, res) {
     }
 }
 
-setInterval(()=> {
-    console.log('deletando')
-    const tokenTimer = 100000
-    const minimum = Date.now() - tokenTimer
+async function getUserID(token){
+    const session = await db.collection('sessions').findOne({token})
+    console.log(token)
+    if (!session) {
+        return false
+    }
+    return session.user_id
+}
 
-db.collection('sessions').deleteMany({time: {$lt: minimum}})
-.catch((error)=> console.log(error))
 
-},15000)
+// setInterval(()=> {
+//     const tokenTimer = 100000
+//     const minimum = Date.now() - tokenTimer
+
+// db.collection('sessions').deleteMany({time: {$lt: minimum}})
+// .catch((error)=> console.log(error))
+
+// },15000)
 
 
 export {
     createSession,
-    validateSession
+    validateSession,
+    getUserID
 }

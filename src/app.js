@@ -1,17 +1,16 @@
-import express from 'express';
+import express, { Router } from 'express';
 import cors from 'cors';
-
-import {createUser, login} from './controllers/user.controller.js'
-import {validateSession} from './controllers/session.controller.js'
+import signRoutes from './routes/sign.routes.js';
+import sessionsRoutes from './routes/sessions.routes.js';
+import cashflowRoutes from './routes/cashflow.routes.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/sign-up', createUser)
-app.get('/sign-in', login)
-
-app.get('/session', validateSession)
+app.use(signRoutes);
+app.use(sessionsRoutes);
+app.use(cashflowRoutes);
 
 app.listen(5000, () => {
     console.log('listen on port 5000')
