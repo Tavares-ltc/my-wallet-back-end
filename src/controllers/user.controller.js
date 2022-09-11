@@ -36,6 +36,7 @@ async function createUser(req, res) {
 }
 
 async function login(req, res) {
+    console.log(req.body)
     const validation = validateLogin(req.body);
     if (validation.error) {
         return res.status(422).send(validation.error.message);
@@ -44,20 +45,20 @@ async function login(req, res) {
         
         const userData = await db.collection('users').findOne({ email: req.body.email });
         const session = await db.collection('sessions').findOne({ user_id: userData._id });
-        console.log(userData._id)
-        console.log(session)
         if (session) {
-            return res.sendStatus(409)
+            await db.collection('sessions').deleteOne({ user_id: userData._id });
         }
         if (userData && bcrypt.compareSync(req.body.password, userData.password)) {
-            const token = await createSession(userData._id)
-            console.log('teu ' + token)
-            res.status(200).send(token)
+            const token = await createSession(userData._id);
+            res.status(200).send({
+                token,
+                name: userData.name
+            });
         } else {
-            return res.sendStatus(404)
+            return res.sendStatus(404);
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.sendStatus(401);
     }
 }

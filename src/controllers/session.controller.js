@@ -12,22 +12,11 @@ async function createSession(user_id) {
     return token
 }
 async function validateSession(req, res) {
-    if(!req.headers.authorization){
-        return res.sendStatus(422)
+    if(!res.locals.user){
+        return res.send(false)
     }
-    const token = req.headers.authorization
-    try {
-        const isValid = await db.collection('sessions').findOne({token: token});
-        if(!isValid){
-            return res.sendStatus(401);
-        }
-        console.log(isValid)
-        res.sendStatus(200)
-
-    } catch (error) {
-        console.log(err.message)
-        res.sendStatus(500)
-    }
+    const userName = res.locals.user;
+    res.status(200).send(userName)
 }
 
 async function getUserID(token){
@@ -40,14 +29,14 @@ async function getUserID(token){
 }
 
 
-// setInterval(()=> {
-//     const tokenTimer = 100000
-//     const minimum = Date.now() - tokenTimer
+setInterval(()=> {
+    const tokenTimer = 600000
+    const minimum = Date.now() - tokenTimer
 
-// db.collection('sessions').deleteMany({time: {$lt: minimum}})
-// .catch((error)=> console.log(error))
+db.collection('sessions').deleteMany({time: {$lt: minimum}})
+.catch((error)=> console.log(error))
 
-// },15000)
+},20000)
 
 
 export {
