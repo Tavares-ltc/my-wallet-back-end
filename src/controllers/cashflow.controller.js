@@ -72,18 +72,29 @@ async function getBalance(req, res) {
     try {
         const cashflowList = await db.collection('cashflow').find({ user_id: ObjectId(user_id) }).toArray();
         cashflowList.forEach((item)=> {
-        console.log(balance)
             balance += item.value
         })
         return res.send({balance: balance})
     } catch (error) {
-        return res.sendStatus(404)
+        return res.sendStatus(404);
     }
+}
+
+async function deleteCashflow(req, res){
+
+    try {
+        await db.collection('cashflow').deleteOne({_id: ObjectId (req.body.id)})
+        return res.sendStatus(200)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
+
 }
 
 export {
     createCashIn,
     createCashOut,
     listCashflow,
-    getBalance
+    getBalance,
+    deleteCashflow
 }
