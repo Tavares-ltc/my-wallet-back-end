@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import express from 'express'
 import cors from 'cors';
 import signRoutes from './routes/sign.routes.js';
 import sessionsRoutes from './routes/sessions.routes.js';

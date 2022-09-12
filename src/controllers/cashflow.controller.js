@@ -91,10 +91,20 @@ async function deleteCashflow(req, res){
 
 }
 
+async function editCashflow(req, res) {
+    try {
+        await db.collection('cashflow').updateOne({_id: id},{$set: req.body})
+        res.sendStatus(200)
+    } catch (error) {
+        res.status(404).send(error.message)
+    }
+}
+
 export {
     createCashIn,
     createCashOut,
     listCashflow,
     getBalance,
-    deleteCashflow
+    deleteCashflow,
+    editCashflow
 }
